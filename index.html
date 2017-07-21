@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="cs">
+ <head>
+
+    <title>Had</title>
+ 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script>
+  function pause (){
+		alert('Pauznuto');
+	}
+	var c =document.getElementById('canvas');
+	var ctx = c.getContext('2d');
+	ctx.fillStyle='red';
+	ctx.fillRect(180,180,20,20);
+	ctx.fillStyle='black';
+	ctx.fillRect(0,0,20,20);
+	var x = y = my = 0;
+	var mx = 20;
+	var position = [[0,0]];
+	var redDot = [180, 180];
+
+	window.addEventListener('keydown', direction);
+	setInterval(move, 500);
+
+	function direction(){
+		switch (event.keyCode) {
+			case 68:
+				mx=20;
+				my=0;
+				break;
+			case 65:
+				mx=-20;
+				my=0;
+				break;
+			case 87:
+				mx=0;
+				my=-20;
+				break;
+			case 83:
+				mx=0;
+				my=20;
+				break;
+		}
+	}
+	function move(){
+		//ctx.clearRect(x,y,20,20);
+		x = x + mx;
+		y = y + my;
+		if (x > 380){
+			x = 0;
+		}
+		else if  (x < 0){
+			x = 380;
+		}
+		else if (y > 380){
+			y = 0;
+		}
+		else if (y < 0){
+			y = 380;
+		}
+		if(x == redDot[0] & y == redDot[1]){
+			position.push(redDot[0], redDot[1]);
+			generator();
+		}
+		ctx.fillRect(x,y,20,20);
+		position.push([x,y]);
+		remove();
+
+	}
+	function remove(){
+		ctx.clearRect(position[0][0],position[0][1], 20, 20);
+		position.shift();
+	}
+	function generator (){
+		redDot[0] = (Math.floor(Math.random () * 20))*20;
+		redDot[1] = (Math.floor(Math.random () * 20))*20;
+		ctx.fillRect(redDot[0], redDot[1], 20, 20);
+	}
+  </script>
+
+ </head>
+ <body>
+	<button onclick='pause()'>Stop</button><br>
+	<canvas id='canvas' height="400px" width="400px" style="border:solid;"></canvas>
+ </body>
+</html>
