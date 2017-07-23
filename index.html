@@ -8,22 +8,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script>
-  function pause (){
-		alert('Pauznuto');
-	}
-	var c =document.getElementById('canvas');
-	var ctx = c.getContext('2d');
+	window.onload=function (){
+	c =document.getElementById('canvas');
+	ctx = c.getContext('2d');
 	ctx.fillStyle='red';
 	ctx.fillRect(180,180,20,20);
 	ctx.fillStyle='black';
 	ctx.fillRect(0,0,20,20);
+	}
 	var x = y = my = 0;
 	var mx = 20;
 	var position = [[0,0]];
 	var redDot = [180, 180];
+	var points = 1;
+	var difficult = 500;
+	var startProm = 0;
 
-	window.addEventListener('keydown', direction);
-	setInterval(move, 500);
+	function difficulty(){
+		difficult = document.getElementById('selector').value;
+		document.cookie ='diff=250';
+	}
+
+	function start(){
+		if (startProm == 0 ){
+			window.addEventListener('keydown', direction);
+			var interval = setInterval(move, difficult);
+			startProm = 1;
+
+		}
+	}
 
 	function direction(){
 		switch (event.keyCode) {
@@ -46,7 +59,6 @@
 		}
 	}
 	function move(){
-		//ctx.clearRect(x,y,20,20);
 		x = x + mx;
 		y = y + my;
 		if (x > 380){
@@ -62,12 +74,22 @@
 			y = 380;
 		}
 		if(x == redDot[0] & y == redDot[1]){
-			position.push(redDot[0], redDot[1]);
+			points = points + 1;
+			document.getElementById('points').innerHTML = 'Body: ' + points;
+			position.push([redDot[0], redDot[1]]);
+			ctx.fillStyle='black';
+			ctx.fillRect(x,y,20,20);
 			generator();
+		}else {
+			if(control(x, y) == false){
+				alert('Konec hry');
+				location.reload();
+			}
+			ctx.fillStyle='black';
+			ctx.fillRect(x,y,20,20);
+			position.push([x,y]);
+			remove();
 		}
-		ctx.fillRect(x,y,20,20);
-		position.push([x,y]);
-		remove();
 
 	}
 	function remove(){
@@ -77,13 +99,39 @@
 	function generator (){
 		redDot[0] = (Math.floor(Math.random () * 20))*20;
 		redDot[1] = (Math.floor(Math.random () * 20))*20;
+		if(control(redDot[0], redDot[1]) == false){
+			generator();
+		}
+		ctx.fillStyle='red';
 		ctx.fillRect(redDot[0], redDot[1], 20, 20);
+	}
+	function control (x, y) {
+		for(i=0;i < position.length; i++){
+			if(x == position[i][0] & y == position[i][1]){
+				return false;
+			}
+		}
+	}
+	function stop(){
+		location.reload();
+	}
+	function pause (){
+		alert('Pauznuto');
 	}
   </script>
 
  </head>
  <body>
-	<button onclick='pause()'>Stop</button><br>
+ 	<button onclick='start()'>Start</button>
+	<button onclick='pause()'>Pause</button>
+	<button onclick='stop()'>Konec</button>
+	<p id='points' style='display:inline;'>Body: 1</p>
+	<select id='selector' onchange="difficulty()">
+  		<option value="500">Easy</option>
+  		<option value="300">Medium</option>
+  		<option value="100">Hard</option>
+	</select>
+	<br>
 	<canvas id='canvas' height="400px" width="400px" style="border:solid;"></canvas>
  </body>
 </html>
