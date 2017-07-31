@@ -26,15 +26,14 @@
 
 	function difficulty(){
 		difficult = document.getElementById('selector').value;
-		document.cookie ='diff=250';
 	}
 
 	function start(){
+		document.getElementById('selector').disabled=true;
 		if (startProm == 0 ){
 			window.addEventListener('keydown', direction);
-			var interval = setInterval(move, difficult);
+			setInterval(move, difficult);
 			startProm = 1;
-
 		}
 	}
 
@@ -113,6 +112,7 @@
 		}
 	}
 	function stop(){
+		document.getElementById('selector').disabled=false;
 		location.reload();
 	}
 	function pause (){
